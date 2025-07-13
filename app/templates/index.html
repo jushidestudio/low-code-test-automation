@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}テストツール ホーム{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">テストツール ホーム</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            テストコード生成
+        </div>
+        <div class="card-body">
+            <form id="generateCodeForm">
+                <div class="mb-3">
+                    <label for="generateUrl" class="form-label">ターゲットURL:</label>
+                    <input type="url" class="form-control" id="generateUrl" placeholder="例: https://example.com/api/test">
+                </div>
+                <button type="button" id="generateCodeButton" class="btn btn-primary">
+                    <i class="bi bi-robot me-2"></i>テストコード生成開始
+                </button>
+            </form>
+            <div id="generatingStatus" class="alert alert-info mt-3 d-none" role="alert">
+                テストコードを生成中です。しばらくお待ちください...
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    {# ★★★ ここからテストケース一覧のセクション ★★★ #}
+    <h2 class="mb-4">登録済みテストケース一覧</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        {# 新規アイテム追加ボタン #}
+        <button id="openAddModalButton" class="btn btn-primary me-2">
+            <i class="bi bi-plus-circle me-1"></i> 新規アイテムを追加
+        </button>
+        {# 編集・削除・実行ボタン群 #}
+        <div>
+            <button id="executeSelectedButton" class="btn btn-success me-2" disabled>
+                <i class="bi bi-play-fill me-1"></i>選択項目を実行
+            </button>
+            <button id="deleteSelectedButton" class="btn btn-danger" disabled>
+                <i class="bi bi-trash-fill me-1"></i>選択項目を削除
+            </button>
+        </div>
+    </div>
+
+    {% if test_cases %}
+    <div class="table-responsive">
+        <table id="itemListTable" class="table table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">名前</th>
+                    <th scope="col">URL</th>
+                    <th scope="col">テストコード（一部）</th>
+                    <th scope="col">作成日時</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for case in test_cases %}
+                <tr class="selectable-row">
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input item-checkbox" type="checkbox" id="checkbox-{{ case.id }}" value="{{ case.id }}">
+                        </div>
+                    </td>
+                    <td>{{ case.id }}</td>
+                    <td>{{ case.name }}</td>
+                    <td><a href="{{ case.url }}" target="_blank">{{ case.url | truncate(50) }}</a></td>
+                    <td>
+                        <div class="test-code-preview" data-full-code="{{ case.code | e }}">
+                            <pre class="mb-0"><code>{{ case.code | truncate(100, True, '...') }}</code></pre>
+                            {% if case.code and case.code | length > 100 %}
+                                <button class="btn btn-link btn-sm p-0 read-more-code">続きを見る</button>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ case.created_at.strftime('%Y-%m-%d %H:%M:%S') if case.created_at else 'N/A' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1 execute-button" data-id="{{ case.id }}">実行</button>
+                        <button class="btn btn-sm btn-warning me-1 edit-button" data-id="{{ case.id }}">編集</button>
+                        <button class="btn btn-sm btn-danger delete-button" data-id="{{ case.id }}">削除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>まだ登録されているテストケースはありません。</p>
+    {% endif %}
+
+    {# common_modal.html をインクルードして、モーダルをページに含める #}
+    {% include 'common_modal.html' %}
+
+</div>
+{% endblock %}
