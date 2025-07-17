@@ -1,7 +1,7 @@
-#開発用
+# 開発用
 ENV = "development"
-DEBUG = True # Flaskのデバッグモードも有効にすると便利です
+DEBUG = True  # Flaskのデバッグモードも有効にすると便利です
 
-#本番用
+# 本番用
 # ENV = "production"
 # DEBUG = False

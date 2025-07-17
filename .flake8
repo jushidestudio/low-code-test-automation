@@ -1,0 +1,6 @@
+# .flake8
+
+[flake8]
+exclude = .git,__pycache__,venv,.venv,env # ここに仮想環境のフォルダ名を追加
+; max-line-length = 100 # 他の推奨設定も追加
+; ignore = E501,W503 # 必要に応じて無視したいエラーコードを追加
